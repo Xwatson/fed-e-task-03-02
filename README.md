@@ -3,11 +3,11 @@
 ### 一、简答题
 
 #### 1、请简述 Vue 首次渲染的过程。
-- 1.在Vue实例方法init中首先设置_isVue标记，将来在响应式处理中不进行响应式处理
-- 2.判断当前Vue实例是否是组件，如果是则合并组件options选项
-- 3.否则合将用户传进来得options与Vue构造函数中的options进行合并
-- 4.设置渲染代理对象（如果是开发环境调用initProxy否则将vue实例设置给_renderProxy）
-- 5.initProxy方法中判断了当前环境是否支持Proxy，如果支持将_renderProxy设置new Proxy代理否则将vue实例设置给_renderProxy
+- ~~1.在Vue实例方法init中首先设置_isVue标记，将来在响应式处理中不进行响应式处理~~
+- ~~2.判断当前Vue实例是否是组件，如果是则合并组件options选项
+- ~~3.否则合将用户传进来得options与Vue构造函数中的options进行合并
+- ~~4.设置渲染代理对象（如果是开发环境调用initProxy否则将vue实例设置给_renderProxy）
+- ~~5.initProxy方法中判断了当前环境是否支持Proxy，如果支持将_renderProxy设置new Proxy代理否则将vue实例设置给_renderProxy
 - 6.如果传入el参数，开始调用$mount方法传入el
 - 7.$mount方法中先判断options中是否有render函数，如果没有则拿到options中template进行判断
 - 8.通过判断template如果是字符串，并且模板是id选择器则调用idToTemplate方法获取dom元素的innerHTML返回作为模板
