@@ -25,6 +25,15 @@
 - 20.在赋值this.value时，调用了this.get方法，get方法中调用了getter方法，而getter就是传进去的updateComponent方法，此时调用了_update方法完成渲染
 - 21.最后Watcher执行完成，调用callHook方法触发生命周期函数mounted，挂载完毕，首次渲染完成
 #### 2、请简述 Vue 响应式原理。
+- 1.Vue的响应式从Vue的实例init()方法开始，在init()方法中先调用initState()初始化Vue实例的状态，在initState方法中调用了initData()， initData()是把data属性注入到Vue实例上，并且调用observe(data)将data对象转化成响应式的对象
+- 2.observe是响应式的入口, 在observe(value)中，首先判断传入的参数value是否是对象，如果不是对象直接返回。然后判断value对象是否有__ob__这个属性标记，如果有说明做过了响应式处理，则直接返回，如果没有，创建observer对象，最后返回observer对象
+- 3.在observer构造函数中，首先为当前的value对象定义不可枚举的__ob__属性，并将observer对象记录__ob__属性中，然后再进行数组的响应式处理和对象的响应式处理，数组的响应式处理就是拦截数组的几个特殊的方法，push、pop、shift、sort等，当这些方法被调用会发送通知，然后找到数组对象中的__ob__对象中的dep，调用dep的notify()方法，再遍历数组中每一个成员，对每个成员调用observer()，如果这个成员是对象的话，也会转换成响应式对象。对象的响应式处理，是调用walk方法，walk方法就是遍历对象的属性，对每个属性调用defineReactive方法
+- 4.defineReactive会为每一个属性创建对应的dep对象，让dep去收集依赖，如果当前属性的值是对象，会调用observe转换成响应式对象。defineReactive中最核心的是getter 和 setter。getter 的作用是收集依赖，收集依赖时, 为每一个属性收集依赖，如果这个属性的值是对象，那也要为子对象收集依赖，最终返回属性的值。在setter 中，先保存新值，如果新值是对象，也要调用 observe ，把新设置的对象也转换成响应式的对象，然后发送通知，调用dep.notify()
+- 5.收集依赖时，在watcher对象的get方法中调用pushTarget，记录Dep.target属性，访问data中的成员的时候收集依赖，defineReactive的getter中收集依赖，把属性对应的 watcher 对象添加到dep的subs数组中，为childOb（数组中发送变化时用到的）收集依赖，目的是当子对象发送变化（添加和删除成员）时发送通知。
+- 6.Watcher中，在数据发生变化的时候，会调用dep.notify()发送通知，dep.notify()会调用watcher对象的update()方法，update()中的调用的queueWatcher()会去判断watcher是否被处理，如果这个watcher对象没有的话添加到queue队列中，并调用flushScheduleQueue()刷新任务队列，flushScheduleQueue()触发beforeUpdate钩子函数调用watcher.run()，此方法会调用结构 run() --> get() --> getter() --> updateComponent()
+- 7.然后清空上一次的依赖，重置watcher中状态
+- 8.触发actived的钩子函数
+- 9.触发updated钩子函数
 
 #### 3、请简述虚拟 DOM 中 Key 的作用和好处。
 
