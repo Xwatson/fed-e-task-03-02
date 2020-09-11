@@ -36,5 +36,11 @@
 - 9.触发updated钩子函数
 
 #### 3、请简述虚拟 DOM 中 Key 的作用和好处。
+- 在数据更新时可减少dom操作
+- 在列表渲染时提高列表渲染效率
 
 #### 4、请简述 Vue 中模板编译的过程。
+- compileToFunctions入口函数中，先从缓存中加载编译好的render函数，如果缓存中没有则调用compile开始编译
+- compile函数中，核心功能是合并options选项，然后调用baseCompile将options传递
+- baseCompile函数中，首先把template字符串转换成AST对象（抽象语法树），然后对AST tree进行优化标记，标记其中的所有静态跟节点（不需要在每次重新渲染的时候重新生成节点，patch过程中会跳过根节点），最后把优化后的AST对象转换成js创建代码
+- 回到compileToFunctions中，通过调用createFunction继续把上一步生成的字符串js转换为函数，当render和staticRenderFns创建化完成，最终会被挂载到Vue实例的options对应的属性中
